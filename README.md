@@ -16,10 +16,10 @@ Go 1.26 + Fiber v3 템플릿 프로젝트입니다.
 - `internal/`
   - `server/`
     - `route/` : 라우팅 정의
-      - `v1.go` : 그룹 라우팅 진입점 (`/`, `/v1/...`)
+      - `v1.go` : 라우팅 그룹 엔트리 (`/`, `/v1/...`)
       - `v1/` : `/v1` 하위 라우트
-    - `handler/` : 핸들러(현재는 라우트 파일 내에서 확장 가능)
-  - 향후 도메인/기능별로 세분화하여 관리
+    - `handler/` : 라우트 핸들러
+  - `route` 패키지를 사용해 그룹 기반 페이지 라우팅 구조를 구성
 - `pkg/`
   - `utils/` : 유틸리티(외부 모듈로 공유 가능한 코드)
 
@@ -28,9 +28,11 @@ Go 1.26 + Fiber v3 템플릿 프로젝트입니다.
 ```bash
 cd go-fiber-template
 mise trust .
-mise run           # 서버 실행
-mise lint          # 정적 검사
-mise format        # 코드 포맷팅
+
+mise run-server   # 서버 실행
+mise build-server # 서버 바이너리 빌드 (출력: ./bin/server)
+mise lint         # 정적 검사
+mise format       # 코드 포맷팅
 ```
 
 ## 기본 엔드포인트

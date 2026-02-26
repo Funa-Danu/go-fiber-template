@@ -1,4 +1,5 @@
 [tools]
+
 go = "1.26"
 
 [tasks.format]
@@ -9,6 +10,10 @@ run = "gofmt -w ."
 description = "Run Go static checks"
 run = "go vet ./..."
 
-[tasks.run]
-description = "Run the Fiber v3 app"
+[tasks.run-server]
+description = "Run the Fiber server"
 run = "go run ./cmd/server"
+
+[tasks.build-server]
+description = "Build the Fiber server binary"
+run = "go build -o bin/server ./cmd/server"
