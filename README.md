@@ -10,10 +10,6 @@ Go 1.26 + Fiber v3 템플릿 프로젝트입니다.
 
 - `cmd/`
   - `server/main.go` : 서버 시작점 (entrypoint)
-- `client/`
-  - `db/` : DB 연결/쿼리 클라이언트
-  - `valkey/` : Valkey(또는 Redis 계열) 클라이언트/유틸
-    - `mocks/` : `mockgen`으로 생성한 테스트 Mock
 - `internal/`
   - `server/`
     - `route/` : 라우팅 정의
@@ -34,32 +30,8 @@ mise build-server     # 서버 바이너리 빌드 (출력: ./bin/server)
 mise lint             # 정적 검사
 mise format           # 코드 포맷팅
 mise unit-test        # 유닛 테스트 (integration 제외)
-mise integration-test  # 통합 테스트 (Testcontainers 실행)
-mise mockgen           # valkey 패키지 mock 생성
+mise integration-test  # 통합 테스트 (현재 테스트 범위는 내부 라우팅/서버 위주)
 mise test-all          # unit + integration 한 번에 실행
-```
-
-## Valkey 클라이언트
-
-`client/valkey`는 다음을 제공합니다.
-
-- `LoadConfigFromEnv()`
-  - `VALKEY_ADDR`, `VALKEY_USERNAME`, `VALKEY_PASSWORD`, `VALKEY_DB` 읽기
-- `New(ctx, cfg)`
-  - 연결 유효성 검사(`PING`)까지 수행
-
-## Mockgen 사용 예시
-
-- `client/valkey/interface.go`의 `ValkeyClient`를 기준으로 Mock 파일을 생성/재생성합니다.
-
-```bash
-mise mockgen
-```
-
-Go 파일 내부에는 다음의 `go:generate` 지시어가 있어요.
-
-```go
-//go:generate mockgen -source=interface.go -destination=mocks/mock_valkey.go -package=mockclient
 ```
 
 ## 기본 엔드포인트
@@ -67,6 +39,6 @@ Go 파일 내부에는 다음의 `go:generate` 지시어가 있어요.
 - `GET /` : "hello fiber3"
 - `GET /v1/health` : JSON 헬스체크 응답
 
-### 테스트 주의
+## 테스트 주의
 
-- `mise integration-test`는 Docker가 있는 환경에서만 실행 가능합니다.
+- `mise integration-test`는 현재 환경의 통합 대상에 따라 Docker 등이 필요한 테스트는 생략될 수 있습니다.

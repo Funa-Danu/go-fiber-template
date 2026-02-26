@@ -26,10 +26,6 @@ run = "go test ./... -tags=\"!integration\""
 description = "Run integration tests with Testcontainers"
 run = "go test ./... -tags=integration"
 
-[tasks.mockgen]
-description = "Generate gomock mocks"
-run = "go generate ./client/valkey/..."
-
 [tasks.test-all]
 description = "Run all tests (unit + integration)"
 run = "mise run unit-test && mise run integration-test"
