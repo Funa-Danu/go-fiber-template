@@ -117,7 +117,7 @@ docker compose -f client-pgx-docker-compose.yaml down
 요구 테이블 스키마는 `client/pgx/sql/funa_item_schema.sql` 템플릿 기준으로 준비됩니다.
 쿼리는 `client/pgx/sql/*.sql`로 분리되어 있고, place-entity 스타일처럼 `go:embed`로 주입되는 구조입니다.
 
-`client/pgx/funa_item_schema.sql`
+`client/pgx/sql/funa_item_schema.sql`
 
 ```sql
 CREATE TABLE IF NOT EXISTS funa_item (
