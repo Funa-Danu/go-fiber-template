@@ -13,6 +13,7 @@ Go 1.26 + Fiber v3 템플릿 프로젝트입니다.
 - `client/`
   - `valkey/` : Valkey(또는 Redis 계열) 클라이언트/유틸
     - `command_*` 테스트 + 통합 테스트 예시 제공
+  - `pgx/` : PostgreSQL(PGX) 클라이언트/유틸
 - `internal/`
   - `server/`
     - `route/` : 라우팅 정의
@@ -40,15 +41,20 @@ mise test-all          # unit + integration 한 번에 실행
 
 ## 환경 변수 주입
 
-실행 전 아래 환경변수값이 주입됩니다.
+실행 전 아래 환경변수값이 주입됩니다. 기본값은 `.env.example` 참조
 
 - `SERVICE_NAME` (default: `go-fiber-template`)
 - `ENV` (default: `local`)
 - `PORT` (default: `3000`)
 - `VALKEY_ADDR` (default: `localhost:6379`)
 - `VALKEY_DB` (default: `0`)
+- `PG_HOST` (default: `localhost`)
+- `PG_PORT` (default: `5432`)
+- `PG_USER` (default: `postgres`)
+- `PG_PASSWORD` (default: `postgres`)
+- `PG_DATABASE` (default: `postgres`)
 
-`cmd/server/main.go`는 이 값을 `internal/config`에서 로드해서 라우팅/리스닝 포트를 구성합니다.
+`cmd/server/main.go`는 이 값을 `internal/config`에서 로드해서 라우팅/리스닝 포트 및 의존성 클라이언트를 구성합니다.
 
 ## 환경 변수 예시
 
@@ -56,40 +62,39 @@ mise test-all          # unit + integration 한 번에 실행
 
 ```bash
 cp .env.example .env
-``` 
-
-현재 사용하는 환경변수:
-
-- `SERVICE_NAME` (기본: `go-fiber-template`)
-- `ENV` (기본: `local`)
-- `PORT` (기본: `3000`)
-- `VALKEY_ADDR` (기본: `localhost:6379`)
-- `VALKEY_DB` (기본: `0`)
-
-```bash
-cp .env.example .env
 ```
 
-## 클라이언트 실행 환경 (Valkey)
+## 클라이언트 실행 환경
 
-`client-docker-compose.yaml`에 Valkey(클라이언트 캐시 저장소)만 띄우는 구성이 준비되어 있습니다.
+- Valkey
 
 ```bash
 docker compose -f client-docker-compose.yaml up -d
 ```
 
 ```bash
-# 앱 실행 (로컬)
-# .env 파일을 읽어서 실행하려면, 현재는 수동으로 변수 주입이 필요할 수 있습니다.
-# (예: export $(grep -v '^#' .env | xargs) && go run ./cmd/server)
+# 중지
+docker compose -f client-docker-compose.yaml down
+```
+
+- PostgreSQL(PGX)
+
+```bash
+docker compose -f client-pgx-docker-compose.yaml up -d
+```
+
+```bash
+# 중지
+docker compose -f client-pgx-docker-compose.yaml down
 ```
 
 ## 테스트 구조
 
 - `client/valkey`는 실제 서비스 연동 코드와 테스트 템플릿을 제공합니다.
+- `client/pgx`는 PostgreSQL 연동 코드와 테스트 템플릿(테스트컨테이너 연동 포함)을 제공합니다.
 - 단위 테스트: `*_test.go`
 - 통합 테스트: `*_integration_test.go` + `//go:build integration`
-- 통합 테스트는 `TestMain`에서 Testcontainers 기반으로 Valkey 컨테이너를 띄운 뒤 종료 처리
+- 통합 테스트는 `TestMain`에서 Testcontainers 기반으로 컨테이너를 띄운 뒤 종료 처리
 
 ## 기본 엔드포인트
 

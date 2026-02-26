@@ -13,6 +13,12 @@ type Setting struct {
 
 	ValkeyAddress string
 	ValkeyDB      int
+
+	PostgresHost     string
+	PostgresPort     string
+	PostgresUser     string
+	PostgresPassword string
+	PostgresDatabase string
 }
 
 func getEnv(key, defaultValue string) string {
@@ -53,13 +59,23 @@ func NewSetting() Setting {
 	port, _ := getEnvOrDefault("PORT", "3000")
 	valkeyAddress, _ := getEnvOrDefault("VALKEY_ADDR", "localhost:6379")
 	valkeyDB, _ := mustAtoI(getEnv("VALKEY_DB", "0"))
+	pgHost, _ := getEnvOrDefault("PG_HOST", "localhost")
+	pgPort, _ := getEnvOrDefault("PG_PORT", "5432")
+	pgUser, _ := getEnvOrDefault("PG_USER", "postgres")
+	pgPassword, _ := getEnvOrDefault("PG_PASSWORD", "postgres")
+	pgDatabase, _ := getEnvOrDefault("PG_DATABASE", "postgres")
 
 	return Setting{
-		ServiceName:   serviceName,
-		Env:           env,
-		Port:          port,
-		ValkeyAddress: valkeyAddress,
-		ValkeyDB:      valkeyDB,
+		ServiceName:      serviceName,
+		Env:              env,
+		Port:             port,
+		ValkeyAddress:    valkeyAddress,
+		ValkeyDB:         valkeyDB,
+		PostgresHost:     pgHost,
+		PostgresPort:     pgPort,
+		PostgresUser:     pgUser,
+		PostgresPassword: pgPassword,
+		PostgresDatabase: pgDatabase,
 	}
 }
 
@@ -100,6 +116,15 @@ func (s Setting) validate() error {
 	}
 	if s.ValkeyDB < 0 {
 		return &MissingEnvError{Key: "VALKEY_DB must be >= 0"}
+	}
+	if _, err := strconv.Atoi(s.PostgresPort); err != nil {
+		return &MissingEnvError{Key: "PG_PORT must be int"}
+	}
+	if s.PostgresHost == "" {
+		_, err := mustGetEnv("PG_HOST")
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
