@@ -56,6 +56,8 @@ mise test-all          # unit + integration 한 번에 실행
 
 `cmd/server/main.go`는 이 값을 `internal/config`에서 로드해서 라우팅/리스닝 포트 및 의존성 클라이언트를 구성합니다.
 
+현재 Go 런타임은 `.env.example` 파일을 자동으로 읽지 않습니다. 실행 전 환경변수는 직접 `export`하거나, `mise`/셸에서 `.env`를 로드해야 합니다.
+
 ## 환경 변수 예시
 
 로컬 실행 시 `.env.example` 기준으로 값을 채워서 사용할 수 있습니다.
@@ -104,3 +106,30 @@ docker compose -f client-pgx-docker-compose.yaml down
 ## 테스트 주의
 
 - `mise integration-test`는 Docker/컨테이너 환경이 필요할 수 있습니다.
+
+
+## PostgreSQL CRUD 예시 (funa_item)
+
+`client/pgx/funa_item.go`에서 `funa_item` 테이블 기준의 최소 CRUD 예시를 제공합니다.
+
+요구 테이블 스키마는 프로젝트가 직접 생성하지 않으며, 운영 DB에서 아래 형태로 준비가 필요합니다.
+
+```sql
+CREATE TABLE funa_item (
+  id BIGSERIAL PRIMARY KEY,
+  name TEXT NOT NULL,
+  description TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
+
+예시 사용법:
+
+```go
+repo := pgx.NewFunaItemRepository(db)
+item, err := repo.CreateFunaItem(ctx, "name", "desc")
+item, err = repo.GetFunaItem(ctx, item.ID)
+items, err := repo.ListFunaItemNamesByPrefix(ctx, "foo", 10, 0)
+_, err = repo.UpdateFunaItem(ctx, pgx.FunaItem{ID: item.ID, Name: "name2", Description: "desc2"})
+_, err = repo.DeleteFunaItem(ctx, item.ID)
+```
