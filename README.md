@@ -13,6 +13,7 @@ Go 1.26 + Fiber v3 템플릿 프로젝트입니다.
 - `client/`
   - `db/` : DB 연결/쿼리 클라이언트
   - `valkey/` : Valkey(또는 Redis 계열) 클라이언트/유틸
+    - `mocks/` : `mockgen`으로 생성한 테스트 Mock
 - `internal/`
   - `server/`
     - `route/` : 라우팅 정의
@@ -34,6 +35,8 @@ mise lint             # 정적 검사
 mise format           # 코드 포맷팅
 mise unit-test        # 유닛 테스트 (integration 제외)
 mise integration-test  # 통합 테스트 (Testcontainers 실행)
+mise mockgen           # valkey 패키지 mock 생성
+mise test-all          # unit + integration 한 번에 실행
 ```
 
 ## Valkey 클라이언트
@@ -44,6 +47,20 @@ mise integration-test  # 통합 테스트 (Testcontainers 실행)
   - `VALKEY_ADDR`, `VALKEY_USERNAME`, `VALKEY_PASSWORD`, `VALKEY_DB` 읽기
 - `New(ctx, cfg)`
   - 연결 유효성 검사(`PING`)까지 수행
+
+## Mockgen 사용 예시
+
+- `client/valkey/interface.go`의 `ValkeyClient`를 기준으로 Mock 파일을 생성/재생성합니다.
+
+```bash
+mise mockgen
+```
+
+Go 파일 내부에는 다음의 `go:generate` 지시어가 있어요.
+
+```go
+//go:generate mockgen -source=interface.go -destination=mocks/mock_valkey.go -package=mockclient
+```
 
 ## 기본 엔드포인트
 

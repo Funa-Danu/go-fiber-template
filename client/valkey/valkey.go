@@ -63,29 +63,34 @@ type Client struct {
 	cfg Config
 }
 
+// Ping checks connectivity and satisfies ValkeyClient.
+func (c *Client) Ping(ctx context.Context) PingResult {
+	return c.Client.Ping(ctx)
+}
+
 // New builds a Valkey client from config.
-func New(ctx context.Context, cfg Config) (*Client, error) {
+func New(ctx context.Context, cfg Config) (ValkeyClient, error) {
 	if cfg.Address == "" {
 		cfg.Address = defaultAddress
 	}
 
-	c := redis.NewClient(&redis.Options{
+	redisClient := redis.NewClient(&redis.Options{
 		Addr:     cfg.Address,
 		Username: cfg.Username,
 		Password: cfg.Password,
 		DB:       cfg.DB,
 	})
 
-	if err := c.Ping(ctx).Err(); err != nil {
+	if err := redisClient.Ping(ctx).Err(); err != nil {
 		return nil, fmt.Errorf("valkey ping failed: %w", err)
 	}
 
-	return &Client{Client: c, cfg: cfg}, nil
+	return &Client{Client: redisClient, cfg: cfg}, nil
 }
 
 // CloseClient closes underlying client.
-func CloseClient(c *Client) error {
-	if c == nil || c.Client == nil {
+func CloseClient(c ValkeyClient) error {
+	if c == nil {
 		return nil
 	}
 	return c.Close()
