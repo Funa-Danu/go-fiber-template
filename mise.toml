@@ -11,4 +11,4 @@ run = "go vet ./..."
 
 [tasks.run]
 description = "Run the Fiber v3 app"
-run = "go run ."
+run = "go run ./cmd/server"
