@@ -20,7 +20,7 @@ run = "go build -o bin/server ./cmd/server"
 
 [tasks.generate]
 description = "Run go generate on all packages"
-run = 'go install github.com/golang/mock/mockgen@v1.6.0 && PATH="$(go env GOPATH)/bin:$PATH" go generate ./...'
+run = "go generate ./..."
 
 [tasks.unit-test]
 description = "Run unit tests"

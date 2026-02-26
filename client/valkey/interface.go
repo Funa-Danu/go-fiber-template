@@ -1,6 +1,6 @@
 package valkey
 
-//go:generate mockgen -source=interface.go -destination=./mocks/mock_valkey.go -package=mockclient
+//go:generate go run github.com/golang/mock/mockgen@v1.6.0 -package valkey -self_package "go-fiber-template/client/valkey" -destination=./valkey_client_mock.go "go-fiber-template/client/valkey" ValkeyClient
 
 import "time"
 
