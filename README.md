@@ -19,7 +19,6 @@ Go 1.26 + Fiber v3 템플릿 프로젝트입니다.
       - `v1.go` : 라우팅 그룹 엔트리 (`/`, `/v1/...`)
       - `v1/` : `/v1` 하위 라우트
     - `handler/` : 라우트 핸들러
-  - `route` 패키지를 사용해 그룹 기반 페이지 라우팅 구조를 구성
 - `pkg/`
   - `utils/` : 유틸리티(외부 모듈로 공유 가능한 코드)
 
@@ -29,13 +28,28 @@ Go 1.26 + Fiber v3 템플릿 프로젝트입니다.
 cd go-fiber-template
 mise trust .
 
-mise run-server   # 서버 실행
-mise build-server # 서버 바이너리 빌드 (출력: ./bin/server)
-mise lint         # 정적 검사
-mise format       # 코드 포맷팅
+mise run-server       # 서버 실행
+mise build-server     # 서버 바이너리 빌드 (출력: ./bin/server)
+mise lint             # 정적 검사
+mise format           # 코드 포맷팅
+mise unit-test        # 유닛 테스트 (integration 제외)
+mise integration-test  # 통합 테스트 (Testcontainers 실행)
 ```
+
+## Valkey 클라이언트
+
+`client/valkey`는 다음을 제공합니다.
+
+- `LoadConfigFromEnv()`
+  - `VALKEY_ADDR`, `VALKEY_USERNAME`, `VALKEY_PASSWORD`, `VALKEY_DB` 읽기
+- `New(ctx, cfg)`
+  - 연결 유효성 검사(`PING`)까지 수행
 
 ## 기본 엔드포인트
 
 - `GET /` : "hello fiber3"
 - `GET /v1/health` : JSON 헬스체크 응답
+
+### 테스트 주의
+
+- `mise integration-test`는 Docker가 있는 환경에서만 실행 가능합니다.
