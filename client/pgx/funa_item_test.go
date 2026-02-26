@@ -30,7 +30,7 @@ func TestFunaItemRepository_CreateAndDelete(t *testing.T) {
 			return fakeRow{values: []any{int64(1), "n", "d"}}
 		},
 		execFn: func(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error) {
-			require.Equal(t, `DELETE FROM funa_item WHERE id = $1`, sql)
+			require.Equal(t, "DELETE FROM funa_item WHERE id = $1", strings.Join(strings.Fields(sql), " "))
 			require.Equal(t, int64(1), args[0])
 			return pgconn.NewCommandTag("DELETE 1"), nil
 		},

@@ -85,7 +85,7 @@ docker compose -f client-docker-compose.yaml down
 docker compose -f client-pgx-docker-compose.yaml up -d
 ```
 
-컨테이너를 최초 기동할 때는 `client-pgx-docker-compose.yaml`이 `client/pgx/funa_item_schema.sql`을 자동으로 적용합니다.
+컨테이너를 최초 기동할 때는 `client-pgx-docker-compose.yaml`이 `client/pgx/sql/funa_item_schema.sql`을 자동으로 적용합니다.
 
 ```bash
 # 중지
@@ -114,7 +114,8 @@ docker compose -f client-pgx-docker-compose.yaml down
 
 `client/pgx/funa_item.go`에서 `funa_item` 테이블 기준의 최소 CRUD 예시를 제공합니다.
 
-요구 테이블 스키마는 `client/pgx/funa_item_schema.sql` 템플릿 기준으로 준비됩니다.
+요구 테이블 스키마는 `client/pgx/sql/funa_item_schema.sql` 템플릿 기준으로 준비됩니다.
+쿼리는 `client/pgx/sql/*.sql`로 분리되어 있고, place-entity 스타일처럼 `go:embed`로 주입되는 구조입니다.
 
 `client/pgx/funa_item_schema.sql`
 

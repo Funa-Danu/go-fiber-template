@@ -2,29 +2,30 @@ package pgx
 
 import (
 	"context"
+	_ "embed"
 	"fmt"
 	"strings"
 )
 
-const (
-	funaItemTable       = "funa_item"
-	defaultSelectFields = "id, name, description"
-)
+//go:embed sql/funa_item_create.sql
+var createFunaItemSQL string
+
+//go:embed sql/funa_item_get.sql
+var getFunaItemSQL string
+
+//go:embed sql/funa_item_update.sql
+var updateFunaItemSQL string
+
+//go:embed sql/funa_item_delete.sql
+var deleteFunaItemSQL string
+
+//go:embed sql/funa_item_list_by_name_like.sql
+var listFunaItemByNameLikeSQL string
+
+//go:embed sql/funa_item_list_by_name_like_with_escape.sql
+var listFunaItemByNameLikeWithEscapeSQL string
 
 // FunaItem represents the sample table record used by the pgx CRUD example.
-//
-// Schema (external to the template; create this table in your DB):
-//
-// CREATE TABLE funa_item (
-//
-//	id BIGSERIAL PRIMARY KEY,
-//	name TEXT NOT NULL,
-//	description TEXT NOT NULL,
-//	created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-//
-// );
-//
-// created_at is intentionally not exposed in this example.
 type FunaItem struct {
 	ID          int64
 	Name        string
@@ -45,9 +46,7 @@ func NewFunaItemRepository(db Client) *FunaItemRepository {
 func (r *FunaItemRepository) CreateFunaItem(ctx context.Context, name, description string) (FunaItem, error) {
 	item, err := mapFunaItem(r.db.QueryRow(
 		ctx,
-		`INSERT INTO `+funaItemTable+` (name, description)
-		 VALUES ($1, $2)
-		 RETURNING `+defaultSelectFields,
+		createFunaItemSQL,
 		name,
 		description,
 	))
@@ -61,7 +60,7 @@ func (r *FunaItemRepository) CreateFunaItem(ctx context.Context, name, descripti
 func (r *FunaItemRepository) GetFunaItem(ctx context.Context, id int64) (FunaItem, error) {
 	item, err := mapFunaItem(r.db.QueryRow(
 		ctx,
-		`SELECT `+defaultSelectFields+` FROM `+funaItemTable+` WHERE id = $1`,
+		getFunaItemSQL,
 		id,
 	))
 	if err != nil {
@@ -74,7 +73,7 @@ func (r *FunaItemRepository) GetFunaItem(ctx context.Context, id int64) (FunaIte
 func (r *FunaItemRepository) UpdateFunaItem(ctx context.Context, item FunaItem) (int64, error) {
 	tag, err := r.db.Exec(
 		ctx,
-		`UPDATE `+funaItemTable+` SET name = $1, description = $2 WHERE id = $3`,
+		updateFunaItemSQL,
 		item.Name,
 		item.Description,
 		item.ID,
@@ -89,7 +88,7 @@ func (r *FunaItemRepository) UpdateFunaItem(ctx context.Context, item FunaItem) 
 func (r *FunaItemRepository) DeleteFunaItem(ctx context.Context, id int64) (int64, error) {
 	tag, err := r.db.Exec(
 		ctx,
-		`DELETE FROM `+funaItemTable+` WHERE id = $1`,
+		deleteFunaItemSQL,
 		id,
 	)
 	if err != nil {
@@ -102,7 +101,7 @@ func (r *FunaItemRepository) DeleteFunaItem(ctx context.Context, id int64) (int6
 func (r *FunaItemRepository) ListFunaItemNamesByPrefix(ctx context.Context, namePrefix string, limit, offset int32) ([]FunaItem, error) {
 	rows, err := r.db.Query(
 		ctx,
-		`SELECT `+defaultSelectFields+` FROM `+funaItemTable+` WHERE name LIKE $1 ORDER BY id DESC LIMIT $2 OFFSET $3`,
+		listFunaItemByNameLikeSQL,
 		"%"+namePrefix+"%",
 		limit,
 		offset,
@@ -177,7 +176,7 @@ func (r *FunaItemRepository) ListFunaItemNamesByPrefixWithEscape(ctx context.Con
 	pattern := normalizePattern(namePrefix)
 	rows, err := r.db.Query(
 		ctx,
-		`SELECT `+defaultSelectFields+` FROM `+funaItemTable+` WHERE name LIKE $1 ESCAPE '\\' ORDER BY id DESC LIMIT $2 OFFSET $3`,
+		listFunaItemByNameLikeWithEscapeSQL,
 		pattern,
 		limit,
 		offset,
