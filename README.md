@@ -38,6 +38,52 @@ mise integration-test  # 통합 테스트 (현재 통합 대상은 valkey 테스
 mise test-all          # unit + integration 한 번에 실행
 ```
 
+## 환경 변수 주입
+
+실행 전 아래 환경변수값이 주입됩니다.
+
+- `SERVICE_NAME` (default: `go-fiber-template`)
+- `ENV` (default: `local`)
+- `PORT` (default: `3000`)
+- `VALKEY_ADDR` (default: `localhost:6379`)
+- `VALKEY_DB` (default: `0`)
+
+`cmd/server/main.go`는 이 값을 `internal/config`에서 로드해서 라우팅/리스닝 포트를 구성합니다.
+
+## 환경 변수 예시
+
+로컬 실행 시 `.env.example` 기준으로 값을 채워서 사용할 수 있습니다.
+
+```bash
+cp .env.example .env
+``` 
+
+현재 사용하는 환경변수:
+
+- `SERVICE_NAME` (기본: `go-fiber-template`)
+- `ENV` (기본: `local`)
+- `PORT` (기본: `3000`)
+- `VALKEY_ADDR` (기본: `localhost:6379`)
+- `VALKEY_DB` (기본: `0`)
+
+```bash
+cp .env.example .env
+```
+
+## 클라이언트 실행 환경 (Valkey)
+
+`client-docker-compose.yaml`에 Valkey(클라이언트 캐시 저장소)만 띄우는 구성이 준비되어 있습니다.
+
+```bash
+docker compose -f client-docker-compose.yaml up -d
+```
+
+```bash
+# 앱 실행 (로컬)
+# .env 파일을 읽어서 실행하려면, 현재는 수동으로 변수 주입이 필요할 수 있습니다.
+# (예: export $(grep -v '^#' .env | xargs) && go run ./cmd/server)
+```
+
 ## 테스트 구조
 
 - `client/valkey`는 실제 서비스 연동 코드와 테스트 템플릿을 제공합니다.

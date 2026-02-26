@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  valkey:
+    image: valkey/valkey:8-alpine
+    container_name: go-fiber-template-valkey
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: ["valkey-server", "--save", "", "--appendonly", "no"]
+
+  # 앱은 필요하면 아래 주석 해제해서 compose로 같이 띄울 수 있습니다.
+  # app:
+  #   build:
+  #     context: .
+  #   container_name: go-fiber-template
+  #   environment:
+  #     - SERVICE_NAME=${SERVICE_NAME}
+  #     - ENV=${ENV}
+  #     - PORT=3000
+  #     - VALKEY_ADDR=valkey:6379
+  #     - VALKEY_DB=0
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - valkey
