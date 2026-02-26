@@ -18,6 +18,10 @@ run = "go run ./cmd/server"
 description = "Build the Fiber server binary"
 run = "go build -o bin/server ./cmd/server"
 
+[tasks.generate]
+description = "Run go generate on all packages"
+run = 'go install github.com/golang/mock/mockgen@v1.6.0 && PATH="$(go env GOPATH)/bin:$PATH" go generate ./...'
+
 [tasks.unit-test]
 description = "Run unit tests"
 run = "go test ./... -tags=\"!integration\""

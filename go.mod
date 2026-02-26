@@ -4,6 +4,7 @@ go 1.26.0
 
 require (
 	github.com/gofiber/fiber/v3 v3.1.0
+	github.com/golang/mock v1.6.0
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.11.1
 	github.com/testcontainers/testcontainers-go/modules/valkey v0.40.0

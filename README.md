@@ -30,6 +30,7 @@ mise trust .
 
 mise run-server       # 서버 실행
 mise build-server     # 서버 바이너리 빌드 (출력: ./bin/server)
+mise generate         # go:generate 실행 (mock/stub 생성 등)
 mise lint             # 정적 검사
 mise format           # 코드 포맷팅
 mise unit-test        # 유닛 테스트 (integration 제외)
