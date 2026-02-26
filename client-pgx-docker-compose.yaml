@@ -10,3 +10,5 @@ services:
     ports:
       - "5432:5432"
     command: ["postgres", "-c", "listen_addresses=*"]
+    volumes:
+      - ./client/pgx/funa_item_schema.sql:/docker-entrypoint-initdb.d/funa_item_schema.sql

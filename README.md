@@ -85,6 +85,8 @@ docker compose -f client-docker-compose.yaml down
 docker compose -f client-pgx-docker-compose.yaml up -d
 ```
 
+컨테이너를 최초 기동할 때는 `client-pgx-docker-compose.yaml`이 `client/pgx/funa_item_schema.sql`을 자동으로 적용합니다.
+
 ```bash
 # 중지
 docker compose -f client-pgx-docker-compose.yaml down
@@ -112,15 +114,20 @@ docker compose -f client-pgx-docker-compose.yaml down
 
 `client/pgx/funa_item.go`에서 `funa_item` 테이블 기준의 최소 CRUD 예시를 제공합니다.
 
-요구 테이블 스키마는 프로젝트가 직접 생성하지 않으며, 운영 DB에서 아래 형태로 준비가 필요합니다.
+요구 테이블 스키마는 `client/pgx/funa_item_schema.sql` 템플릿 기준으로 준비됩니다.
+
+`client/pgx/funa_item_schema.sql`
 
 ```sql
-CREATE TABLE funa_item (
+CREATE TABLE IF NOT EXISTS funa_item (
   id BIGSERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   description TEXT NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS idx_funa_item_name ON funa_item (name);
 ```
 
 예시 사용법:
