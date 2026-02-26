@@ -1,0 +1,14 @@
+[tools]
+go = "1.26"
+
+[tasks.format]
+description = "Format Go source files"
+run = "gofmt -w ."
+
+[tasks.lint]
+description = "Run Go static checks"
+run = "go vet ./..."
+
+[tasks.run]
+description = "Run the Fiber v3 app"
+run = "go run ."
